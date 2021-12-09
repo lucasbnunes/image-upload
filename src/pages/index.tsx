@@ -13,15 +13,23 @@ export default function Home(): JSX.Element {
     data,
     isLoading,
     isError,
+    error,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery(
-    'images'
-    // TODO AXIOS REQUEST WITH PARAM
+  } = useInfiniteQuery('images', fetchImages, {
+    getNextPageParam: lastPage => lastPage.data.after,
+  });
 
-    // TODO GET AND RETURN NEXT PAGE PARAM
-  );
+  console.log(data);
+
+  async function fetchImages({ pageParam = null }: { pageParam?: string }) {
+    return api.get('api/images', {
+      params: {
+        after: pageParam,
+      },
+    });
+  }
 
   const formattedData = useMemo(() => {
     // TODO FORMAT AND FLAT DATA ARRAY
