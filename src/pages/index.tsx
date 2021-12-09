@@ -7,6 +7,15 @@ import { CardList } from '../components/CardList';
 import { api } from '../services/api';
 import { Loading } from '../components/Loading';
 import { Error } from '../components/Error';
+import { AxiosResponse } from 'axios';
+
+interface Image {
+  title: string;
+  description: string;
+  url: string;
+  ts: number;
+  id: string;
+}
 
 export default function Home(): JSX.Element {
   const {
@@ -21,8 +30,6 @@ export default function Home(): JSX.Element {
     getNextPageParam: lastPage => lastPage.data.after,
   });
 
-  console.log(data);
-
   async function fetchImages({ pageParam = null }: { pageParam?: string }) {
     return api.get('api/images', {
       params: {
@@ -31,8 +38,10 @@ export default function Home(): JSX.Element {
     });
   }
 
-  const formattedData = useMemo(() => {
-    // TODO FORMAT AND FLAT DATA ARRAY
+  const formattedData: Image[] = useMemo(() => {
+    if (data) {
+      return data.pages[0].data.data;
+    }
   }, [data]);
 
   // TODO RENDER LOADING SCREEN
