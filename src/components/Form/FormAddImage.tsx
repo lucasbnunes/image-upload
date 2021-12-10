@@ -56,20 +56,13 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
     },
   };
 
-  async function addImage(data: {
-    url: string;
-    title: string;
-    description: string;
-  }) {
+  function addImage(data: { url: string; title: string; description: string }) {
     return api.post('api/images', data);
   }
 
   const queryClient = useQueryClient();
   const mutation = useMutation(addImage, {
-    onSuccess: data => {
-      console.log(data);
-      queryClient.invalidateQueries('images');
-    },
+    onSuccess: () => queryClient.invalidateQueries('images'),
   });
 
   const { register, handleSubmit, reset, formState, setError, trigger } =
@@ -78,9 +71,6 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
 
   const onSubmit = async (data: Record<string, unknown>): Promise<void> => {
     try {
-      console.log(data);
-      console.log({ localImageUrl, imageUrl });
-
       if (!imageUrl) {
         toast({
           title: 'Imagem não adicionada',
@@ -92,7 +82,7 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
         return;
       }
 
-      mutation.mutateAsync({
+      await mutation.mutateAsync({
         url: imageUrl,
         title: data.title as string,
         description: data.description as string,
