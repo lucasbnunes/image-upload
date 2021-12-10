@@ -25,21 +25,22 @@ export default function Home(): JSX.Element {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery('images', fetchImages, {
-    getNextPageParam: lastPage => lastPage.data.after,
+    getNextPageParam: lastPage => lastPage.after,
   });
 
-  function fetchImages({ pageParam = null }: { pageParam?: string }) {
-    return api.get('api/images', {
+  async function fetchImages({ pageParam = null }: { pageParam?: string }) {
+    const res = await api.get('api/images', {
       params: {
         after: pageParam,
       },
     });
+
+    return res.data;
   }
 
   const formattedData: Image[] = useMemo(() => {
     if (data) {
-      const formatted = data.pages.flatMap(page => page.data.data);
-      console.log(formatted);
+      const formatted = data.pages.flatMap(page => page.data);
 
       return formatted;
     }
